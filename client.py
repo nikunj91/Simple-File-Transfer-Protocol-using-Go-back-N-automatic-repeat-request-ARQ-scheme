@@ -1,5 +1,5 @@
 #Simple-FTP sender
-
+import socket
 import sys
 import collections
 import pickle
@@ -27,8 +27,8 @@ ack_packet = namedtuple('ack_packet', 'sequence_no padding type')
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sending_completed=False
 
-SEND_HOST = sys.argv[1]
-SEND_PORT = sys.argv[2]	
+SEND_HOST = socket.gethostbyname(socket.gethostname())
+SEND_PORT = 7735
 FILE_NAME = sys.argv[3]
 N = sys.argv[4]	
 MSS = sys.argv[5]
@@ -36,26 +36,17 @@ MSS = sys.argv[5]
 def retransmit_packet(packet, host, port, socket, sequence_no):
 	global last_ack_packet
 	if last_ack_packet<sequence_no:
-		print "packet "+sequence_no+" timer expired"
+		print "packet "+str(sequence_no)+" timer expired"
 		send_packet(packet, host, port, socket, sequence_no)
 
-# Types of packets
-TYPE_DATA = "0101010101010101"
-TYPE_ACK = "1010101010101010"
-TYPE_EOF = "1111111111111111"
 
-def receive_ack():
-	print "received"
-	return 0
-	
-def send_packet(client_buffer(last_send_packet+1, host, port):
-	print "packet sent"
 
 def send_packet(packet, host, port, socket, sequence_no):
-	socket.sendto(packet, (host, port))
+	client_socket.sendto(packet, (SEND_HOST, SEND_PORT))
 	t=threading.Timer(RTT,retransmit_packet,[packet,host,port,socket,sequence_no])
+	t.setName(str(sequence_no))
 	t.start()
-	print "packet "+sequence_no+" sent"
+	print "packet "+str(sequence_no)+" sent"
 
 def rdt_send(file_content, client_socket, host, port):
 	global last_send_packet,last_ack_packet,sliding_window,client_buffer
@@ -68,6 +59,7 @@ def rdt_send(file_content, client_socket, host, port):
 def compute_checksum_for_chuck(chunk):
 	checksum=0
 	l=len(chunk)
+	print l
 	chunk=str(chunk)
 	for byte in range(0,l,2):
 		byte1=ord(chunk[byte])
@@ -81,23 +73,23 @@ def compute_checksum_for_chuck(chunk):
 	checksum_complement=checksum^0xffff
 	return checksum_complement
 
-def ack_process:
+def ack_process():
 	global last_ack_packet,last_send_packet,client_buffer,sliding_window,client_socket,SEND_PORT,SEND_HOST
 	ack_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    ack_socket.bind((ACK_HOST, ACK_PORT))
-    while 1:
-    	reply = pickle.loads(ack_socket.recv(65535))
-    	if reply[2] == TYPE_ACK:
-    		current_ack_seq_number=reply[0]-1
-    		if last_ack_packet >= -1:
-    			thread_lock.acquire()
+	ack_socket.bind((ACK_HOST, ACK_PORT))
+	while 1:
+		reply = pickle.loads(ack_socket.recv(65535))
+		if reply[2] == TYPE_ACK:
+			current_ack_seq_number=reply[0]-1
+			if last_ack_packet >= -1:
+				thread_lock.acquire()
     			if current_ack_seq_number == max_seq_number:
     				eof_packet = pickle.dumps(["0", "0", TYPE_EOF, "0"])
-                    client_socket.sendto(eof_packet, (SERVER_HOST, SERVER_PORT))
-                    thread_lock.release()
-                    sending_completed=True
-                    break
-        		elif current_ack_seq_number>last_ack_packet:
+    				client_socket.sendto(eof_packet, (SEND_HOST, SEND_PORT))
+    				thread_lock.release()
+    				sending_completed=True
+    				break
+    			elif current_ack_seq_number>last_ack_packet:
         			while last_ack_packet<=current_ack_seq_number:
         				last_ack_packet=last_ack_packet+1
         				sliding_window.pop(last_ack_packet)
@@ -115,7 +107,7 @@ def main():
 	
 
 	
-	port = int(SEND_PORT)
+	port = SEND_PORT
 	host = SEND_HOST
 	N = int(N)
 	mss = int(MSS)
@@ -126,18 +118,23 @@ def main():
 	
 	sequence_number = 0
 	try:
-        with open(file_name, 'rb') as f:
-            while True:
-                chunk = f.read(int(MSS))  
-                if chunk:
-                	max_seq_number=sequence_number
-                	chunk_checksum=compute_checksum_for_chuck(chunk)
-                    client_buffer[sequence_number] = pickle.dumps([sequence_number,chunk_checksum,TYPE_DATA,chunk])
-                    sequence_number=sequence_number+1
-                else:
-                    break
-    except:
-        sys.exit("Failed to open file!")
+		with open(FILE_NAME, 'rb') as f:
+			while True:
+				print 'here'
+				chunk = f.read(int(mss))  
+				if chunk:
+					print 'one'
+					max_seq_number=sequence_number
+					print 'two'
+					chunk_checksum=compute_checksum_for_chuck(chunk)
+					print 'three'
+					client_buffer[sequence_number] = pickle.dumps([sequence_number,chunk_checksum,TYPE_DATA,chunk])
+					print 'four'
+					sequence_number=sequence_number+1
+				else:
+					break
+	except:
+		sys.exit("Failed to open file!")
 
 	ack_thread = threading.Thread(target=ack_process)
 	ack_thread.start() 	
@@ -146,6 +143,9 @@ def main():
 		if sending_completed:
 			break
 	
+	ack_thread.join()
+	client_socket.close()
+
 if __name__ == "__main__":
     main()
 

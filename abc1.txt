@@ -14,4 +14,4 @@ Ovid Full Text Links
 If your organization subscribes to both UpToDate and Ovid, an Ovid Full Text link will appear on UpToDate abstract pages whenever the full text of an article is available through your hospital’s Ovid subscription.
 
 Other Link Resolvers
-If your organization uses a link resolver other than Ovid, you may also access full text. Some of the journal subscription services with links to UpToDate include ExLibris (SFX), TDNet, EBSCO (LinkSource) and Serials Solution (Article Linker).
+If your organization uses a link resolver other than Ovid, you may also access full text. Some of the journal subscription services with links to UpToDate include ExLibris (SFX), TDNet, EBSCO (LinkSource) and Serials Solution (Article Linker)..
