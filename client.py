@@ -9,6 +9,11 @@ sliding_window = set() #Ordered dictionary
 client_buffer = collections.OrderedDict() #Ordered dictionary
 N = 0
 
+# Types of packets
+TYPE_DATA = "0101010101010101"
+TYPE_ACK = "1010101010101010"
+TYPE_EOF = "1111111111111111"
+
 def receive_ack():
 	print "received"
 	return 0
