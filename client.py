@@ -1,11 +1,40 @@
 #Simple-FTP sender
 
 import sys
+import collections
+
+#Variables
+ACK = 0 # ACK received from server.
+sliding_window = set() #Ordered dictionary
+client_buffer = collections.OrderedDict() #Ordered dictionary
+N = 0
+
+def receive_ack():
+	print "received"
+	return 0
+	
+def send_packet(client_buffer(last_send_packet+1, host, port):
+	print "packet sent"
 
 def send_file(file_content, client_socket, host, port):
-	print file_content
-
+	last_send_packet = -1
+	last_ack_packet = -1
+	while len(client_buffer) != 0:
+		while len(sliding_window) < N:
+			send_packet(client_buffer(last_send_packet+1, host, port)
+			last_send_packet = last_send_packet + 1
+			sliding_window.add(last_send_packet)
+		while 1:
+			temp = receive_ack()
+			for i in range(last_ack_packet+1,temp+1):
+				sliding_window.remove(i)
+				buffer.pop(i)
+				last_ack_packet = temp
+	
 def main():
+	global client_buffer 
+	global N
+	
 	host = sys.argv[1]
     port = sys.argv[2]	
     file_name = sys.argv[3]
@@ -21,21 +50,20 @@ def main():
 	
 	max_window_size = N - 1
 	
+	sequence_number = 0
 	try:
-        file_content = []
-        
         with open(file_name, 'rb') as f:
             while True:
                 chunk = f.read(int(MSS))  
                 if chunk:
-                    file_content.append(chunk)
+                    client_buffer[sequence_number] = chunk
                 else:
                     break
-        print(file_content)
+        #print(file_content)
     except:
         sys.exit("Failed to open file!")
 		
-	send_file(file_content, client_socket, host, port)
+	send_file(client_buffer, client_socket, host, port)
 	
 	
 if __name__ == "__main__":

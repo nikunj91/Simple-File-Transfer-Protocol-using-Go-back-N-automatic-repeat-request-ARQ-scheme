@@ -3,6 +3,7 @@
 import sys
 
 def main():
+	# Read command line argument
 	port = sys.argv[1]
     file_name = sys.argv[2]
     probability = sys.argv[3]
