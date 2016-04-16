@@ -27,6 +27,7 @@ ack_packet = namedtuple('ack_packet', 'sequence_no padding type')
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sending_completed=False
 
+<<<<<<< HEAD
 SEND_HOST = sys.argv[1]
 SEND_PORT = sys.argv[2]	
 FILE_NAME = sys.argv[3]
@@ -38,6 +39,19 @@ def retransmit_packet(packet, host, port, socket, sequence_no):
 	if last_ack_packet<sequence_no:
 		print "packet "+sequence_no+" timer expired"
 		send_packet(packet, host, port, socket, sequence_no)
+=======
+# Types of packets
+TYPE_DATA = "0101010101010101"
+TYPE_ACK = "1010101010101010"
+TYPE_EOF = "1111111111111111"
+
+def receive_ack():
+	print "received"
+	return 0
+	
+def send_packet(client_buffer(last_send_packet+1, host, port):
+	print "packet sent"
+>>>>>>> origin/master
 
 
 def send_packet(packet, host, port, socket, sequence_no):
