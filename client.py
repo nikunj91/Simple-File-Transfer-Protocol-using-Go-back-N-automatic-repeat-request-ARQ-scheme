@@ -27,7 +27,6 @@ ack_packet = namedtuple('ack_packet', 'sequence_no padding type')
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sending_completed=False
 
-<<<<<<< HEAD
 SEND_HOST = sys.argv[1]
 SEND_PORT = sys.argv[2]	
 FILE_NAME = sys.argv[3]
