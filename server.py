@@ -23,7 +23,7 @@ def compute_checksum_for_chuck(chunk,checksum):
 	byte=0
 	#print 'ooooo'
 	while byte<l:
-		print byte
+		#print byte
 		byte1=ord(chunk[byte])
 		shifted_byte1=byte1<<8
 		if byte+1==l:

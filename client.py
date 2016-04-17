@@ -39,28 +39,32 @@ def send_packet(packet, host, port, socket, sequence_no):
 
 def rdt_send(file_content, client_socket, host, port):
 	global last_send_packet,last_ack_packet,sliding_window,client_buffer
-	while len(sliding_window)<min(len(client_buffer),N-1):
+	while len(sliding_window)<min(len(client_buffer),N):
 		if last_ack_packet==-1:
 			send_packet(client_buffer[last_send_packet+1], host, port, client_socket, last_send_packet+1)
+			print 'rdt sent '+str(last_send_packet+1)
 			signal.alarm(0)
  			signal.setitimer(signal.ITIMER_REAL, RTT)
 			last_send_packet = last_send_packet + 1
 			sliding_window.add(last_send_packet)
+			y=0
+			while y<100000:
+				y=y+1
 	print 'rdt done'
 	
 def compute_checksum_for_chuck(chunk):
 	checksum=0
 	l=len(chunk)
-	print l
+	#print l
 	chunk=str(chunk)
 	byte=0
-	print 'ooooo'
+	#print 'ooooo'
 	while byte<l:
-		print byte
+		#print byte
 		byte1=ord(chunk[byte])
 		shifted_byte1=byte1<<8
 		if byte+1==l:
-			print 'lllllll'
+			#print 'lllllll'
 			byte2=0xffff
 		else:
 			byte2=ord(chunk[byte+1])
@@ -105,10 +109,11 @@ def ack_process():
         				print sliding_window
         				sliding_window.remove(last_ack_packet)
         				client_buffer.pop(last_ack_packet)
-        				if last_send_packet<max_seq_number:
-        					send_packet(client_buffer[last_send_packet+1],SEND_HOST,SEND_PORT,client_socket,last_send_packet+1)
-        					sliding_window.add(last_send_packet+1)
-        					last_send_packet=last_send_packet+1
+        				while len(sliding_window)<min(len(client_buffer),N):
+	        				if last_send_packet<max_seq_number:
+	        					send_packet(client_buffer[last_send_packet+1],SEND_HOST,SEND_PORT,client_socket,last_send_packet+1)
+	        					sliding_window.add(last_send_packet+1)
+	        					last_send_packet=last_send_packet+1
         			thread_lock.release()
         			print 'lock rel mid'+str(reply[0]-1)
         		else:
