@@ -33,19 +33,8 @@ FILE_NAME = sys.argv[3]
 N = sys.argv[4]	
 MSS = sys.argv[5]
 
-# def retransmit_packet(packet, host, port, socket, sequence_no):
-# 	global last_ack_packet
-# 	if last_ack_packet<sequence_no:
-# 		print "packet "+str(sequence_no)+" timer expired"
-# 		send_packet(packet, host, port, socket, sequence_no)
-
-
-
 def send_packet(packet, host, port, socket, sequence_no):
 	client_socket.sendto(packet, (SEND_HOST, SEND_PORT))
-	# t=threading.Timer(RTT,retransmit_packet,[packet,host,port,socket,sequence_no])
-	# t.setName(str(sequence_no))
-	# t.start()
 	print "packet "+str(sequence_no)+" sent"
 
 def rdt_send(file_content, client_socket, host, port):
@@ -64,15 +53,23 @@ def compute_checksum_for_chuck(chunk):
 	l=len(chunk)
 	print l
 	chunk=str(chunk)
-	for byte in range(0,l,2):
+	byte=0
+	print 'ooooo'
+	while byte<l:
+		print byte
 		byte1=ord(chunk[byte])
 		shifted_byte1=byte1<<8
-		byte2=ord(chunk[byte+1])
+		if byte+1==l:
+			print 'lllllll'
+			byte2=0xffff
+		else:
+			byte2=ord(chunk[byte+1])
 		merged_bytes=shifted_byte1+byte2
 		checksum_add=checksum+merged_bytes
 		carryover=checksum_add>>16
 		main_part=checksum_add&0xffff
 		checksum=main_part+carryover
+		byte=byte+2
 	checksum_complement=checksum^0xffff
 	return checksum_complement
 
@@ -119,7 +116,7 @@ def ack_process():
         			print 'lock rel down'+str(reply[0]-1)
         	print'done again'
 
-def signal_handler(signum, frame):
+def timeout_thread(timeout_th, frame):
 	global last_ack_packet
  	if last_ack_packet==last_send_packet-len(sliding_window):
  		print "packet "+str(last_ack_packet+1)+" timer expired"
@@ -133,9 +130,7 @@ def signal_handler(signum, frame):
 
 def main():
 	global client_buffer ,max_seq_number,client_socket,N
-	
 
-	
 	port = SEND_PORT
 	host = SEND_HOST
 	N = int(N)
@@ -154,7 +149,6 @@ def main():
 				if chunk:
 					max_seq_number=sequence_number
 					chunk_checksum=compute_checksum_for_chuck(chunk)
-					#str(sequence_number)+"0-0-0-0"+str(chunk_checksum)+"0-0-0-0"+ str(TYPE_DATA)+"0-0-0-0"+chunk
 					client_buffer[sequence_number] = pickle.dumps([sequence_number,chunk_checksum,TYPE_DATA,chunk])
 					print max_seq_number
 					sequence_number=sequence_number+1
@@ -163,7 +157,7 @@ def main():
 	except:
 		sys.exit("Failed to open file!")
 
-	signal.signal(signal.SIGALRM, signal_handler)
+	signal.signal(signal.SIGALRM, timeout_thread)
 	ack_thread = threading.Thread(target=ack_process)
 	ack_thread.start() 	
 	rdt_send(client_buffer, client_socket, host, port)

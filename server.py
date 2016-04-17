@@ -3,6 +3,7 @@ import socket
 import pickle
 import random
 import sys
+import os
 
 SERVER_PORT = 7735
 FILE_NAME = sys.argv[2]
@@ -16,19 +17,26 @@ HOST_NAME = socket.gethostname()
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server_socket.bind((HOST_NAME, SERVER_PORT))
 last_received_packet=-1
-
+os.remove(FILE_NAME)
 def compute_checksum_for_chuck(chunk,checksum):
 	l=len(chunk)
-	chunk=str(chunk)
-	for byte in range(0,l,2):
+	byte=0
+	#print 'ooooo'
+	while byte<l:
+		print byte
 		byte1=ord(chunk[byte])
 		shifted_byte1=byte1<<8
-		byte2=ord(chunk[byte+1])
+		if byte+1==l:
+			#print 'lllllll'
+			byte2=0xffff
+		else:
+			byte2=ord(chunk[byte+1])
 		merged_bytes=shifted_byte1+byte2
 		checksum_add=checksum+merged_bytes
 		carryover=checksum_add>>16
 		main_part=checksum_add&0xffff
 		checksum=main_part+carryover
+		byte=byte+2
 	checksum_complement=checksum^0xffff
 	return checksum_complement
 
