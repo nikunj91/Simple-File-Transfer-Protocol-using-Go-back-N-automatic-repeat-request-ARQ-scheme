@@ -15,7 +15,7 @@ ACK_PORT = 65000
 HOST_NAME = socket.gethostname()
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server_socket.bind((HOST_NAME, SERVER_PORT))
-last_received_packet=0
+last_received_packet=-1
 
 def compute_checksum_for_chuck(chunk,checksum):
 	l=len(chunk)

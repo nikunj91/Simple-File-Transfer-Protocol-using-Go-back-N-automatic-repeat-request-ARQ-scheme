@@ -1,17 +1,28 @@
-We know how important it is for UpToDate users in your organization to quickly and easily access full text of journal articles. Some of the benefits of full text linking include:
+While scientists have long avoided attributing specific extreme weather events to changes in global climate, a recent report suggests that some of these events can be attributed to climate change with a high degree of confidence.
 
-Bring research to the point of care
-Provide broad context for a deeper understanding of UpToDate topics
-Increase journal usage
-Improve return on investment of your journal service
-Encourage students, residents and fellows to read and assess the primary medical literature
-UpToDate now offers multiple ways to get to full text:
+The report, from the National Academies of Sciences, Engineering and Medicine, marks the first time that scientists have tried to integrate all the information that might allow them to link weather to climate change, says retired Admiral David Titley, former chief meteorologist for the Navy and now a professor at Penn State University, who chaired the committee that conducted the study.
 
-Pubmed LinkOut
-Your organization can now customize its full text linking options within UpToDate by leveraging our support of PubMed LinkOut. Once activated, clinicians are able to view and link out to the full text of the journals your institution currently subscribes to. You also have the option to customize the text of the LinkOut button.
+“We are not saying that we can attribute every specific event to climate change — far from it,” Titley says. “But we are also now not saying what many scientists, myself included, have said in years past, which is, ‘while the climate is changing, we really can't say anything about any one event.’”
 
-Ovid Full Text Links
-If your organization subscribes to both UpToDate and Ovid, an Ovid Full Text link will appear on UpToDate abstract pages whenever the full text of an article is available through your hospitalís Ovid subscription.
+The scientists were asked to examine specifically the "science of attribution" of extreme weather events to changes in the global climate.
 
-Other Link Resolvers
-If your organization uses a link resolver other than Ovid, you may also access full text. Some of the journal subscription services with links to UpToDate include ExLibris (SFX), TDNet, EBSCO (LinkSource) and Serials Solution (Article Linker)..
+The report found that for some specific extreme events, especially those having to do with temperature — such as heat waves, cold, or lack of cold — science can state a link with quite a high degree of confidence. For heavy rain and flooding events, science can make that assertion with “medium confidence,” and for hurricanes and typhoons, less confidence, Titley says. For things like individual tornados and hailstorms, they can make a link with “almost no confidence at all.”
+
+For the purposes of the study, the researchers established a few criteria for “extreme” weather events, Titley says. “Extreme could be a one-in-a-hundred event, [or] a 30-year record, or maybe an event you’ve never seen, or only rarely seen. ... But one thing they all have in common is that, by definition, these are very, very unusual events.”
+
+The scientists used three components to determine how confident they feel when attributing these specific events. The first is the physical understanding: Do we really understand how climate impacts a particular type of event?
+
+For heat, that's pretty easy, Titley says. “The fundamental physics of greenhouse gases are very well understood. On the other extreme, there's very little [physical] understanding of how climate may or may not affect a specific tornado or hailstorm. We just simply don't know.”
+
+Second is long-term observations: Do we see these extreme events occurring more or less? A long observational record is pretty good evidence that things are changing, Titley says.
+
+And third: Can climate models accurately replicate or reproduce these extreme events? “Do we have the resolution, do we have the physics — all that kind of stuff that goes into these big climate computer models,” Titley explains. “If the answer is yes for all three [components], like it is for temperature-related events — the cold and the heat — we really feel quite confident.”
+
+When asked about an event like Hurricane Sandy, which devastated so many communities along the eastern seaboard, Titley makes an important distinction.
+While science can’t attribute the hurricane itself directly to climate change, “if you start looking at the impacts of that storm, one of the almost indisputable climate-related impacts is that the storm surge from Sandy came in on a higher baseline of sea level, thanks to global sea level rise,” Titley says.
+
+If Sandy had hit a century ago, when sea levels were almost eight inches lower around the New York City area, the hurricane would have inflicted far less damage, he notes. “As you get these very big surges, they cross thresholds. It’s not just a little increment in the amount of damage they do,” he explains. “Once you get to a certain level of water, you flood the New York City subway system.”
+
+Titley acknowledges the difficulty of this science and the complexity of the data underlying it. But he believes the findings in the study have moved the science forward.
+
+“If you think of this as a baseball diamond, maybe we're down to first base now,” he says. “Maybe we've got off of home plate, we're not just swinging at the pitches anymore — and maybe in the case of heat we're even taking a look at second base.” But for some events, however, like severe thunderstorms and tornadoes, “we're still in the batter’s box,” he says
