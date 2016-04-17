@@ -15,7 +15,7 @@ ACK_PORT = 65000
 HOST_NAME = socket.gethostname()
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server_socket.bind((HOST_NAME, SERVER_PORT))
-last_received_packet=-1
+last_received_packet=0
 
 def compute_checksum_for_chuck(chunk,checksum):
 	l=len(chunk)
@@ -40,7 +40,7 @@ def check_if_packet_drop(PACKET_LOSS_PROB,packet_sequence_number):
 
 def send_acknowledgement(ack_number):
 	print "ack "+str(ack_number)+" sent"
-	ack_packet = pickle.dumps([acknowledgement, DATA_PAD, TYPE_ACK])
+	ack_packet = pickle.dumps([ack_number, DATA_PAD, TYPE_ACK])
 	ack_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	ack_socket.sendto(ack_packet,(HOST_NAME, ACK_PORT))
 	ack_socket.close()
@@ -57,20 +57,23 @@ def main():
 		print 'while'
 		received_data1, addr = server_socket.recvfrom(65535)
 		print 'got'
-		print received_data1
-        received_data = pickle.loads(received_data1)
-        print 'DATA RECEIVED'
-        packet_sequence_number, packet_checksum, packet_type, packet_data = received_data[0], received_data[1], received_data[2], received_data[3]
-        if packet_type == TYPE_EOF:
-        	print("File Received from client..Yaaaaaaaay")
-        	completed=True
-        	server_socket.close()
-        elif packet_type == TYPE_DATA:
-        	print("Packet "+ str(packet_sequence_number)+ " received")
-        	drop_packet=check_if_packet_drop(PACKET_LOSS_PROB,packet_sequence_number)
-        	if drop_packet==True:
-        		print "Packet "+packet_sequence_number+" has been dropped due to less probability"
-        	else:
+		print 'DATA RECEIVED'
+		#print received_data1
+		#print received_data1
+		#print received_data1
+		received_data = pickle.loads(received_data1)
+		print 'Split Kiya'
+		packet_sequence_number, packet_checksum, packet_type, packet_data = received_data[0], received_data[1], received_data[2], received_data[3]
+		if packet_type == TYPE_EOF:
+			print("File Received from client..Yaaaaaaaay")
+			completed=True
+			server_socket.close()
+		elif packet_type == TYPE_DATA:
+			print("Packet "+ str(packet_sequence_number)+ " received")
+			drop_packet=check_if_packet_drop(PACKET_LOSS_PROB,packet_sequence_number)
+			if drop_packet==True:
+				print "Packet "+str(packet_sequence_number)+" has been dropped due to less probability"
+			else:
 				if is_checksum_proper(packet_data,packet_checksum):
 					if packet_sequence_number==last_received_packet+1:
 						send_acknowledgement(packet_sequence_number+1)
@@ -79,7 +82,7 @@ def main():
 					else:
 						send_acknowledgement(last_received_packet+1)
 				else:
-					print "Packet "+packet_sequence_number+" has been dropped due to improper checksum"
+					print "Packet "+str(packet_sequence_number)+" has been dropped due to improper checksum"
 
 if __name__ == "__main__":
     main()

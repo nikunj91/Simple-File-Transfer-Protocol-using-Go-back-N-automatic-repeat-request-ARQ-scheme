@@ -10,7 +10,7 @@ from collections import namedtuple
 
 #Variables
 N = 0
-RTT = 0.1
+RTT = 100
 TYPE_DATA = "0101010101010101"
 TYPE_ACK = "1010101010101010"
 TYPE_EOF = "1111111111111111"
@@ -79,6 +79,7 @@ def ack_process():
 	ack_socket.bind((ACK_HOST, ACK_PORT))
 	while 1:
 		reply = pickle.loads(ack_socket.recv(65535))
+		print 'got ack for '+str(reply[0]-1)
 		if reply[2] == TYPE_ACK:
 			current_ack_seq_number=reply[0]-1
 			if last_ack_packet >= -1:
@@ -90,9 +91,10 @@ def ack_process():
     				sending_completed=True
     				break
     			elif current_ack_seq_number>last_ack_packet:
+    				print 'inside ack accepting for packet '+str(reply[0]-1)
         			while last_ack_packet<=current_ack_seq_number:
         				last_ack_packet=last_ack_packet+1
-        				sliding_window.pop(last_ack_packet)
+        				sliding_window.remove(last_ack_packet)
         				client_buffer.pop(last_ack_packet)
         				if last_send_packet<max_seq_number:
         					send_packet(client_buffer[last_send_packet+1],SEND_HOST,SEND_PORT,client_socket,last_send_packet+1)
@@ -128,6 +130,7 @@ def main():
 					print 'two'
 					chunk_checksum=compute_checksum_for_chuck(chunk)
 					print 'three'
+					#str(sequence_number)+"0-0-0-0"+str(chunk_checksum)+"0-0-0-0"+ str(TYPE_DATA)+"0-0-0-0"+chunk
 					client_buffer[sequence_number] = pickle.dumps([sequence_number,chunk_checksum,TYPE_DATA,chunk])
 					print 'four'
 					sequence_number=sequence_number+1
