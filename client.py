@@ -7,6 +7,7 @@ import signal
 import threading
 from multiprocessing import Lock
 from collections import namedtuple
+import time
 
 #Variables
 N = 0
@@ -14,7 +15,7 @@ RTT = 0.1
 TYPE_DATA = "0101010101010101"
 TYPE_ACK = "1010101010101010"
 TYPE_EOF = "1111111111111111"
-ACK_HOST = socket.gethostname()
+ACK_HOST = '10.139.63.147'
 ACK_PORT = 65000
 max_seq_number=0
 last_ack_packet = -1
@@ -27,18 +28,24 @@ ack_packet = namedtuple('ack_packet', 'sequence_no padding type')
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sending_completed=False
 
-SEND_HOST = socket.gethostbyname(socket.gethostname())
+t_start=0
+t_end=0
+
+SEND_HOST = '152.14.142.101'#socket.gethostbyname(socket.gethostname())
 SEND_PORT = 7735
 FILE_NAME = sys.argv[3]
 N = sys.argv[4]	
 MSS = sys.argv[5]
 
 def send_packet(packet, host, port, socket, sequence_no):
-	client_socket.sendto(packet, (SEND_HOST, SEND_PORT))
+	client_socket.sendto(packet,(SEND_HOST,SEND_PORT)) #(SEND_HOST, SEND_PORT))
 	print "packet "+str(sequence_no)+" sent"
 
 def rdt_send(file_content, client_socket, host, port):
-	global last_send_packet,last_ack_packet,sliding_window,client_buffer
+	global last_send_packet,last_ack_packet,sliding_window,client_buffer,t_start
+	print host
+	print port
+	t_start=time.time()
 	while len(sliding_window)<min(len(client_buffer),N):
 		if last_ack_packet==-1:
 			send_packet(client_buffer[last_send_packet+1], host, port, client_socket, last_send_packet+1)
@@ -78,7 +85,7 @@ def compute_checksum_for_chuck(chunk):
 	return checksum_complement
 
 def ack_process():
-	global last_ack_packet,last_send_packet,client_buffer,sliding_window,client_socket,SEND_PORT,SEND_HOST,sending_completed
+	global last_ack_packet,last_send_packet,client_buffer,sliding_window,client_socket,SEND_PORT,SEND_HOST,sending_completed,t_end,t_start,t_total
 	ack_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	ack_socket.bind((ACK_HOST, ACK_PORT))
 	while 1:
@@ -99,6 +106,13 @@ def ack_process():
     				thread_lock.release()
     				print 'lock rel up'+str(reply[0]-1)
     				sending_completed=True
+    				t_end=time.time()
+    				print "Start Time: "+str(t_start)
+    				print "End Time: "+str(t_end)
+    				t_total=t_end-t_start
+    				print "Total Time: "+str(t_total)
+    				with open('time.txt', 'ab') as file:
+    					file.write(str(t_total)+'\n')
     				break
     			elif current_ack_seq_number>last_ack_packet:
     				print 'inside ack accepting for packet '+str(reply[0]-1)
@@ -134,7 +148,7 @@ def timeout_thread(timeout_th, frame):
 	
 
 def main():
-	global client_buffer ,max_seq_number,client_socket,N
+	global client_buffer ,max_seq_number,client_socket,N,SEND_PORT,SEND_HOST,MSS
 
 	port = SEND_PORT
 	host = SEND_HOST

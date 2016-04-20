@@ -5,7 +5,7 @@ import random
 import sys
 import os
 
-SERVER_PORT = 7735
+SERVER_PORT = int(sys.argv[1])
 FILE_NAME = sys.argv[2]
 PACKET_LOSS_PROB = float(sys.argv[3])
 TYPE_DATA = "0101010101010101"
@@ -13,11 +13,13 @@ TYPE_ACK = "1010101010101010"
 TYPE_EOF = "1111111111111111"
 DATA_PAD = "0000000000000000"
 ACK_PORT = 65000
-HOST_NAME = socket.gethostname()
+HOST_NAME = '10.139.63.147'
+ACK_HOST_NAME = '152.14.142.101'
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server_socket.bind((HOST_NAME, SERVER_PORT))
 last_received_packet=-1
-os.remove(FILE_NAME)
+if os.path.isfile(FILE_NAME):
+	os.remove(FILE_NAME)
 def compute_checksum_for_chuck(chunk,checksum):
 	l=len(chunk)
 	byte=0
@@ -50,7 +52,7 @@ def send_acknowledgement(ack_number):
 	print "ack "+str(ack_number)+" sent"
 	ack_packet = pickle.dumps([ack_number, DATA_PAD, TYPE_ACK])
 	ack_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	ack_socket.sendto(ack_packet,(HOST_NAME, ACK_PORT))
+	ack_socket.sendto(ack_packet,(ACK_HOST_NAME, ACK_PORT))
 	ack_socket.close()
 
 def write_data_to_file(packet_data):
@@ -66,7 +68,7 @@ def main():
 		received_data1, addr = server_socket.recvfrom(65535)
 		print 'got'
 		print 'DATA RECEIVED'
-		#print received_data1
+		print addr
 		#print received_data1
 		#print received_data1
 		received_data = pickle.loads(received_data1)
